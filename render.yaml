@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: flask-api
+    env: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app
+    envVars:
+      - key: DATABASE_URL
+        value: postgresql://storesdb_owner:5l4yvVkQUAMe@ep-fragrant-firefly-a5wdov3w.us-east-2.aws.neon.tech/storesdb?sslmode=require
