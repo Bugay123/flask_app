@@ -18,7 +18,7 @@ def create_app(db_url=None):
     app.config["OPENAPI_URL_PREFIX"] = "/"
     app.config["OPENAPI_SWAGGER_UI_PATH"] = "/swagger-ui"
     app.config["OPENAPI_SWAGGER_UI_URL"] = "https://cdn.jsdelivr.net/npm/swagger-ui-dist/"
-    app.config["SQLALCHEMY_DATABASE_URI"] = db_url or os.getenv("DATABASE_URL", "postgresql://storesdb_owner:5l**********@ep-fragrant-firefly-a5wdov3w.us-east-2.aws.neon.tech/storesdb?sslmode=require")
+    app.config["SQLALCHEMY_DATABASE_URI"] = db_url or os.getenv("DATABASE_URL", "postgresql://storesdb_owner:5l4yvVkQUAMe@ep-fragrant-firefly-a5wdov3w.us-east-2.aws.neon.tech/storesdb?sslmode=require")
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     db.init_app(app)
     api = Api(app)

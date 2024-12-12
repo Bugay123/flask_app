@@ -7,7 +7,7 @@ from db import db
 from app import create_app
 from tabulate import tabulate
 
-DATABASE_URL = "postgresql://storesdb_owner:5l**********@ep-fragrant-firefly-a5wdov3w.us-east-2.aws.neon.tech/storesdb?sslmode=require"
+DATABASE_URL = "postgresql://storesdb_owner:5l4yvVkQUAMe@ep-fragrant-firefly-a5wdov3w.us-east-2.aws.neon.tech/storesdb?sslmode=require"
 
 engine = create_engine(DATABASE_URL)
 Session = sessionmaker(bind=engine)
@@ -55,7 +55,7 @@ if __name__ == "__main__":
     app = create_app()
     with app.app_context():
         results = []
-        for num_records in [1000, 10000, 100000, 1000000]:
+        for num_records in [1000, 10000, 100000]:
             print(f"Recreating tables...")
             recreate_tables()
 
