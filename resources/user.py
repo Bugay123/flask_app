@@ -10,6 +10,7 @@ from flask_jwt_extended import (
     jwt_required,
 )
 from blocklist import BLOCKLIST
+from sqlalchemy.exc import SQLAlchemyError
 
 blp = Blueprint("Users", "users", description="Operations on users")
 
