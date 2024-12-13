@@ -9,3 +9,4 @@ tabulate
 gunicorn
 passlib
 python-dotenv
+bcrypt

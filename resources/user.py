@@ -1,7 +1,7 @@
 import logging
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
-from passlib.hash import pbkdf2_sha256
+import bcrypt
 from db import db
 from models import UserModel
 from schemas import UserSchema
@@ -18,6 +18,13 @@ blp = Blueprint("Users", "users", description="Operations on users")
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+def hash_password(password):
+    hashed = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+    return hashed.decode('utf-8')
+
+def verify_password(password, hashed):
+    return bcrypt.checkpw(password.encode('utf-8'), hashed.encode('utf-8'))
+
 @blp.route("/register")
 class UserRegister(MethodView):
     @blp.arguments(UserSchema)
@@ -28,7 +35,7 @@ class UserRegister(MethodView):
 
             user = UserModel(
                 username=user_data["username"],
-                password=pbkdf2_sha256.hash(user_data["password"]),
+                password=hash_password(user_data["password"]),
             )
             db.session.add(user)
             db.session.commit()
@@ -75,7 +82,7 @@ class UserLogin(MethodView):
             UserModel.username == user_data["username"]
         ).first()
 
-        if user and pbkdf2_sha256.verify(user_data["password"], user.password):
+        if user and verify_password(user_data["password"], user.password):
             access_token = create_access_token(identity=str(user.id))
             return {"access_token": access_token}, 200
 
