@@ -8,6 +8,11 @@ from resources.item import blp as ItemBlueprint
 from resources.store import blp as StoreBlueprint
 from resources.user import blp as UserBlueprint
 from blocklist import BLOCKLIST
+from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy import text
+from dotenv import load_dotenv
+
+load_dotenv()
 
 def create_app(db_url=None):
     app = Flask(__name__)
@@ -23,7 +28,7 @@ def create_app(db_url=None):
     db.init_app(app)
     api = Api(app)
 
-    app.config["JWT_SECRET_KEY"] = "jose"
+    app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY")
     jwt = JWTManager(app)
 
     @jwt.additional_claims_loader
@@ -70,13 +75,13 @@ def create_app(db_url=None):
             jsonify(
                 {"description": "The token has been revoked.", "error": "token_revoked"}
             ),
-            401,
+          401,
         )
-    
+
     @app.route('/test_db')
     def test_db():
         try:
-            db.session.execute('SELECT 1')
+            db.session.execute(text('SELECT 1'))
             return jsonify({"message": "Database connection successful"}), 200
         except SQLAlchemyError as e:
             return jsonify({"message": "Database connection failed", "error": str(e)}), 500
