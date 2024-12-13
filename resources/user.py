@@ -18,10 +18,6 @@ blp = Blueprint("Users", "users", description="Operations on users")
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-def hash_password(password):
-    hashed = pbkdf2_sha256.hash(password)
-    return hashed[:64]
-
 @blp.route("/register")
 class UserRegister(MethodView):
     @blp.arguments(UserSchema)
@@ -32,7 +28,7 @@ class UserRegister(MethodView):
 
             user = UserModel(
                 username=user_data["username"],
-                password=hash_password(user_data["password"]),
+                password=pbkdf2_sha256.hash(user_data["password"]),
             )
             db.session.add(user)
             db.session.commit()
@@ -54,13 +50,6 @@ class UserRegister(MethodView):
 
 @blp.route("/user/<int:user_id>")
 class User(MethodView):
-    """
-    This resource can be useful when testing our Flask app.
-    We may not want to expose it to public users, but for the
-    sake of demonstration in this course, it can be useful
-    when we are manipulating data regarding the users.
-    """
-
     @blp.response(200, UserSchema)
     def get(self, user_id):
         user = UserModel.query.get_or_404(user_id)
@@ -71,6 +60,12 @@ class User(MethodView):
         db.session.delete(user)
         db.session.commit()
         return {"message": "User deleted."}, 200
+
+@blp.route("/users")
+class UserList(MethodView):
+    @blp.response(200, UserSchema(many=True))
+    def get(self):
+        return UserModel.query.all()
 
 @blp.route("/login")
 class UserLogin(MethodView):
