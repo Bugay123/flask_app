@@ -7,3 +7,4 @@ flask-jwt-extended
 psycopg2-binary
 tabulate
 gunicorn
+passlib
