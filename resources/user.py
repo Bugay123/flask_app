@@ -18,6 +18,10 @@ blp = Blueprint("Users", "users", description="Operations on users")
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+def hash_password(password):
+    hashed = pbkdf2_sha256.hash(password)
+    return hashed[:64]
+
 @blp.route("/register")
 class UserRegister(MethodView):
     @blp.arguments(UserSchema)
@@ -28,7 +32,7 @@ class UserRegister(MethodView):
 
             user = UserModel(
                 username=user_data["username"],
-                password=pbkdf2_sha256.hash(user_data["password"]),
+                password=hash_password(user_data["password"]),
             )
             db.session.add(user)
             db.session.commit()
