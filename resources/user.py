@@ -11,7 +11,7 @@ from flask_jwt_extended import (
     jwt_required,
 )
 from blocklist import BLOCKLIST
-from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 
 blp = Blueprint("Users", "users", description="Operations on users")
 
@@ -33,10 +33,20 @@ class UserRegister(MethodView):
             db.session.add(user)
             db.session.commit()
 
+            logger.info(f"User {user.username} created successfully.")
             return {"message": "User created successfully."}, 201
+        except IntegrityError as e:
+            db.session.rollback()
+            logger.error(f"IntegrityError: {e}")
+            abort(409, message="A user with that username already exists.")
         except SQLAlchemyError as e:
             db.session.rollback()
+            logger.error(f"SQLAlchemyError: {e}")
             abort(500, message="An error occurred while creating the user.")
+        except Exception as e:
+            db.session.rollback()
+            logger.error(f"Unexpected error: {e}")
+            abort(500, message="An unexpected error occurred while creating the user.")
 
 @blp.route("/user/<int:user_id>")
 class User(MethodView):
