@@ -1,3 +1,4 @@
+import logging
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
 from passlib.hash import pbkdf2_sha256
@@ -14,6 +15,8 @@ from sqlalchemy.exc import SQLAlchemyError
 
 blp = Blueprint("Users", "users", description="Operations on users")
 
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 @blp.route("/register")
 class UserRegister(MethodView):
